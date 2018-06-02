@@ -79,7 +79,7 @@
 
 @interface MGLStyle()
 
-@property (nonatomic, readonly, weak) MGLMapView *mapView;
+@property (nonatomic, readonly, weak) NSObject<MGLStyleHolder> *mapView;
 @property (nonatomic, readonly) mbgl::style::Style *rawStyle;
 @property (readonly, copy, nullable) NSURL *URL;
 @property (nonatomic, readwrite, strong) NS_MUTABLE_DICTIONARY_OF(NSString *, MGLOpenGLStyleLayer *) *openGLLayers;
@@ -121,7 +121,7 @@ static_assert(6 == mbgl::util::default_styles::numOrderedStyles,
 
 #pragma mark -
 
-- (instancetype)initWithRawStyle:(mbgl::style::Style *)rawStyle mapView:(MGLMapView *)mapView {
+- (instancetype)initWithRawStyle:(mbgl::style::Style *)rawStyle mapView:(NSObject<MGLStyleHolder> *)mapView {
     if (self = [super init]) {
         _mapView = mapView;
         _rawStyle = rawStyle;

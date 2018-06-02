@@ -18,7 +18,7 @@ struct SourceWrapper {
     __weak MGLSource *source;
 };
 
-@class MGLMapView;
+@protocol MGLStyleHolder;
 
 @interface MGLSource (Private)
 
@@ -26,7 +26,7 @@ struct SourceWrapper {
  Initializes and returns a source with a raw pointer to the backing store,
  associated with a style.
  */
-- (instancetype)initWithRawSource:(mbgl::style::Source *)rawSource mapView:(nullable MGLMapView *)mapView;
+- (instancetype)initWithRawSource:(mbgl::style::Source *)rawSource mapView:(nullable NSObject<MGLStyleHolder> *)mapView;
 
 /**
  Initializes and returns a source with an owning pointer to the backing store,
@@ -48,7 +48,7 @@ struct SourceWrapper {
  If the source is not currently part of any map view’s style, this property is
  set to `nil`.
  */
-@property (nonatomic, readonly, weak) MGLMapView *mapView;
+@property (nonatomic, readonly, weak) NSObject<MGLStyleHolder> *mapView;
 
 /**
  Adds the mbgl source that this object represents to the mbgl map.
@@ -59,7 +59,7 @@ struct SourceWrapper {
  is added back to the map via `-[MGLStyle addSource:]` and styled with a
  `MGLLayer`.
  */
-- (void)addToMapView:(MGLMapView *)mapView;
+- (void)addToMapView:(NSObject<MGLStyleHolder> *)mapView;
 
 /**
  Removes the mbgl source that this object represents from the mbgl map.
@@ -67,7 +67,7 @@ struct SourceWrapper {
  to the `MGLSource` instance and the unique_ptr reference is valid again. It is
  safe to add the source back to the style after it is removed.
  */
-- (void)removeFromMapView:(MGLMapView *)mapView;
+- (void)removeFromMapView:(NSObject<MGLStyleHolder> *)mapView;
 
 @end
 

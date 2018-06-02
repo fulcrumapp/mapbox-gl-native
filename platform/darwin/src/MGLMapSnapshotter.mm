@@ -3,7 +3,9 @@
 #import <mbgl/actor/actor.hpp>
 #import <mbgl/actor/scheduler.hpp>
 #import <mbgl/util/geo.hpp>
+#import <mbgl/map/map_observer.hpp>
 #import <mbgl/map/map_snapshotter.hpp>
+#import <mbgl/map/map.hpp>
 #import <mbgl/map/camera.hpp>
 #import <mbgl/storage/default_file_source.hpp>
 #import <mbgl/util/default_thread_pool.hpp>
@@ -13,7 +15,7 @@
 #import "MGLOfflineStorage_Private.h"
 #import "MGLGeometry_Private.h"
 #import "NSBundle+MGLAdditions.h"
-#import "MGLStyle.h"
+#import "MGLStyle_Private.h"
 #import "MGLAttributionInfo_Private.h"
 
 #if TARGET_OS_IPHONE
@@ -26,6 +28,8 @@
 
 const CGPoint MGLLogoImagePosition = CGPointMake(8, 8);
 const CGFloat MGLSnapshotterMinimumPixelSize = 64;
+
+class MGLSnapshotterObserver;
 
 @implementation MGLMapSnapshotOptions
 
@@ -80,8 +84,9 @@ const CGFloat MGLSnapshotterMinimumPixelSize = 64;
 }
 @end
 
-@interface MGLMapSnapshotter()
+@interface MGLMapSnapshotter() <MGLStyleHolder>
 @property (nonatomic) BOOL loading;
+@property (nonatomic, readwrite) MGLStyle *style;
 @end
 
 @implementation MGLMapSnapshotter {
@@ -89,6 +94,7 @@ const CGFloat MGLSnapshotterMinimumPixelSize = 64;
     std::shared_ptr<mbgl::ThreadPool> _mbglThreadPool;
     std::unique_ptr<mbgl::MapSnapshotter> _mbglMapSnapshotter;
     std::unique_ptr<mbgl::Actor<mbgl::MapSnapshotter::Callback>> _snapshotCallback;
+    MGLSnapshotterObserver *_observer;
     NS_ARRAY_OF(MGLAttributionInfo *) *_attributionInfo;
     
 }
@@ -99,9 +105,18 @@ const CGFloat MGLSnapshotterMinimumPixelSize = 64;
     if (self) {
         [self setOptions:options];
         _loading = false;
-
+        /* _observer = new MGLSnapshotterObserver(self); */
     }
     return self;
+}
+
+
+- (void)didFinishLoadingStyle {
+    if (!_mbglMapSnapshotter) {
+        return;
+    }
+
+    self.style = [[MGLStyle alloc] initWithRawStyle:&_mbglMapSnapshotter->getMap()->getStyle() mapView:self];
 }
 
 - (void)startWithCompletionHandler:(MGLMapSnapshotCompletionHandler)completion
@@ -454,7 +469,26 @@ const CGFloat MGLSnapshotterMinimumPixelSize = 64;
     }
     
     // Create the snapshotter
-    _mbglMapSnapshotter = std::make_unique<mbgl::MapSnapshotter>(*mbglFileSource, *_mbglThreadPool, styleURL, size, pixelRatio, cameraOptions, coordinateBounds);
+    _mbglMapSnapshotter = std::make_unique<mbgl::MapSnapshotter>(*mbglFileSource, *_mbglThreadPool, styleURL, size, pixelRatio, cameraOptions, *_observer, coordinateBounds);
+}
+
+- (mbgl::Renderer *)renderer {
+  return _mbglMapSnapshotter->getRenderer();
 }
 
 @end
+
+
+class MGLSnapshotterObserver : public mbgl::MapObserver
+{
+public:
+    MGLSnapshotterObserver(MGLMapSnapshotter *object) : snapshotter(object) {
+    }
+
+    void onDidFinishLoadingStyle() override {
+      [snapshotter didFinishLoadingStyle];
+    }
+
+private:
+    __weak MGLMapSnapshotter *snapshotter = nullptr;
+};

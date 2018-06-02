@@ -188,7 +188,8 @@ public:
                           MGLSMCalloutViewDelegate,
                           MGLCalloutViewDelegate,
                           MGLMultiPointDelegate,
-                          MGLAnnotationImageDelegate>
+                          MGLAnnotationImageDelegate,
+                          MGLStyleHolder>
 
 @property (nonatomic) EAGLContext *context;
 @property (nonatomic) GLKView *glView;

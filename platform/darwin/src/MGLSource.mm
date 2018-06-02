@@ -12,7 +12,7 @@
 // special internal source types like mbgl::AnnotationSource.
 @property (nonatomic, readonly) mbgl::style::Source *rawSource;
 
-@property (nonatomic, readonly, weak) MGLMapView *mapView;
+@property (nonatomic, readonly, weak) NSObject<MGLStyleHolder> *mapView;
 
 @end
 
@@ -29,7 +29,7 @@
     return self;
 }
 
-- (instancetype)initWithRawSource:(mbgl::style::Source *)rawSource mapView:(MGLMapView *)mapView {
+- (instancetype)initWithRawSource:(mbgl::style::Source *)rawSource mapView:(NSObject<MGLStyleHolder> *)mapView {
     NSString *identifier = @(rawSource->getID().c_str());
     if (self = [self initWithIdentifier:identifier]) {
         _rawSource = rawSource;
@@ -46,7 +46,7 @@
     return self;
 }
 
-- (void)addToMapView:(MGLMapView *)mapView {
+- (void)addToMapView:(NSObject<MGLStyleHolder> *)mapView {
     if (_pendingSource == nullptr) {
         [NSException raise:@"MGLRedundantSourceException"
                     format:@"This instance %@ was already added to %@. Adding the same source instance " \
@@ -57,7 +57,7 @@
     _mapView.style.rawStyle->addSource(std::move(_pendingSource));
 }
 
-- (void)removeFromMapView:(MGLMapView *)mapView {
+- (void)removeFromMapView:(NSObject<MGLStyleHolder> *)mapView {
     if (self.rawSource == mapView.style.rawStyle->getSource(self.identifier.UTF8String)) {
         _pendingSource = mapView.style.rawStyle->removeSource(self.identifier.UTF8String);
         _mapView = nil;

@@ -132,7 +132,7 @@ private:
 
  @param mapView The map view to whose style the layer has been added.
  */
-- (void)didMoveToMapView:(MGLMapView *)mapView {
+- (void)didMoveToMapView:(NSObject<MGLStyleHolder> *)mapView {
 
 }
 
@@ -148,7 +148,7 @@ private:
 
  @param mapView The map view from whose style the layer is about to be removed.
  */
-- (void)willMoveFromMapView:(MGLMapView *)mapView {
+- (void)willMoveFromMapView:(NSObject<MGLStyleHolder> *)mapView {
 
 }
 
@@ -171,7 +171,7 @@ private:
  @param mapView The map view to which the layer draws.
  @param context A context structure with information defining the frame to draw.
  */
-- (void)drawInMapView:(MGLMapView *)mapView withContext:(MGLStyleLayerDrawingContext)context {
+- (void)drawInMapView:(NSObject<MGLStyleHolder> *)mapView withContext:(MGLStyleLayerDrawingContext)context {
 
 }
 
@@ -180,7 +180,7 @@ private:
  causing the `-drawInMapView:withContext:` method to be called.
  */
 - (void)setNeedsDisplay {
-    [self.style.mapView setNeedsGLDisplay];
+    /* [self.style.mapView setNeedsGLDisplay]; */
 }
 
 @end

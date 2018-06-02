@@ -18,6 +18,9 @@ struct CameraOptions;
 class FileSource;
 class Size;
 class LatLngBounds;
+class MapObserver;
+class Renderer;
+class Map;
 
 namespace style {
 class Style;
@@ -31,6 +34,7 @@ public:
                    const Size&,
                    const float pixelRatio,
                    const CameraOptions&,
+                   MapObserver& observer,
                    const optional<LatLngBounds> region,
                    const optional<std::string> cacheDir = {});
 
@@ -47,6 +51,9 @@ public:
 
     void setRegion(const LatLngBounds&);
     LatLngBounds getRegion() const;
+
+    Renderer* getRenderer();
+    Map* getMap();
 
     using PointForFn = std::function<ScreenCoordinate (const LatLng&)>;
     using Attributions = std::vector<std::string>;

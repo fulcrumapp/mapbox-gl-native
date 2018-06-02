@@ -6,6 +6,7 @@
 
 #import "MGLFoundation.h"
 #import "MGLTypes.h"
+#import "MGLStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,13 +16,13 @@ NS_ASSUME_NONNULL_BEGIN
 @class MGLPolyline;
 @class MGLPolygon;
 @class MGLShape;
-@class MGLStyle;
 
 @protocol MGLMapViewDelegate;
 @protocol MGLAnnotation;
 @protocol MGLOverlay;
 @protocol MGLCalloutView;
 @protocol MGLFeature;
+@protocol MGLStyleHolder;
 
 /** The default deceleration rate for a map view. */
 extern MGL_EXPORT const CGFloat MGLMapViewDecelerationRateNormal;

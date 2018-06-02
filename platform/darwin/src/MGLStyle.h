@@ -7,6 +7,7 @@
 
 @class MGLSource;
 @class MGLLight;
+@class MGLStyle;
 
 NS_ASSUME_NONNULL_BEGIN
 

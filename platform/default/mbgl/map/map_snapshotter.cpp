@@ -19,6 +19,7 @@ public:
          const Size&,
          const float pixelRatio,
          const CameraOptions&,
+         MapObserver& observer,
          const optional<LatLngBounds> region,
          const optional<std::string> programCacheDir);
 
@@ -36,6 +37,8 @@ public:
 
     void snapshot(ActorRef<MapSnapshotter::Callback>);
 
+    Renderer *getRenderer();
+    Map *getMap();
 private:
     HeadlessFrontend frontend;
     Map map;
@@ -47,10 +50,11 @@ MapSnapshotter::Impl::Impl(FileSource& fileSource,
            const Size& size,
            const float pixelRatio,
            const CameraOptions& cameraOptions,
+           MapObserver& observer,
            const optional<LatLngBounds> region,
            const optional<std::string> programCacheDir)
     : frontend(size, pixelRatio, fileSource, scheduler, programCacheDir)
-    , map(frontend, MapObserver::nullObserver(), size, pixelRatio, fileSource, scheduler, MapMode::Static) {
+    , map(frontend, observer, size, pixelRatio, fileSource, scheduler, MapMode::Static) {
 
     map.getStyle().loadURL(styleURL);
 
@@ -132,15 +136,24 @@ LatLngBounds MapSnapshotter::Impl::getRegion() const {
     return map.latLngBoundsForCamera(getCameraOptions());
 }
 
+Renderer* MapSnapshotter::Impl::getRenderer() {
+    return frontend.getRenderer();
+}
+
+Map* MapSnapshotter::Impl::getMap() {
+    return &map;
+}
+
 MapSnapshotter::MapSnapshotter(FileSource& fileSource,
                                Scheduler& scheduler,
                                const std::string& styleURL,
                                const Size& size,
                                const float pixelRatio,
                                const CameraOptions& cameraOptions,
+                               MapObserver& observer,
                                const optional<LatLngBounds> region,
                                const optional<std::string> programCacheDir)
-   : impl(std::make_unique<util::Thread<MapSnapshotter::Impl>>("Map Snapshotter", fileSource, scheduler, styleURL, size, pixelRatio, cameraOptions, region, programCacheDir)) {
+   : impl(std::make_unique<util::Thread<MapSnapshotter::Impl>>("Map Snapshotter", fileSource, scheduler, styleURL, size, pixelRatio, cameraOptions, observer, region, programCacheDir)) {
 }
 
 MapSnapshotter::~MapSnapshotter() = default;
@@ -179,6 +192,14 @@ void MapSnapshotter::setRegion(const LatLngBounds& bounds) {
 
 LatLngBounds MapSnapshotter::getRegion() const {
     return impl->actor().ask(&Impl::getRegion).get();
+}
+
+Renderer* MapSnapshotter::getRenderer() {
+  return impl->actor().ask(&Impl::getRenderer).get();
+}
+
+Map* MapSnapshotter::getMap() {
+  return impl->actor().ask(&Impl::getMap).get();
 }
 
 } // namespace mbgl

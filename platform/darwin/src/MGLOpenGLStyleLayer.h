@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MGLMapView;
 @class MGLStyle;
+@protocol MGLStyleHolder;
 
 typedef struct MGLStyleLayerDrawingContext {
     CGSize size;
@@ -29,11 +30,11 @@ MGL_EXPORT
 
 - (instancetype)initWithIdentifier:(NSString *)identifier;
 
-- (void)didMoveToMapView:(MGLMapView *)mapView;
+- (void)didMoveToMapView:(NSObject<MGLStyleHolder> *)mapView;
 
-- (void)willMoveFromMapView:(MGLMapView *)mapView;
+- (void)willMoveFromMapView:(NSObject<MGLStyleHolder> *)mapView;
 
-- (void)drawInMapView:(MGLMapView *)mapView withContext:(MGLStyleLayerDrawingContext)context;
+- (void)drawInMapView:(NSObject<MGLStyleHolder> *)mapView withContext:(MGLStyleLayerDrawingContext)context;
 
 - (void)setNeedsDisplay;
 

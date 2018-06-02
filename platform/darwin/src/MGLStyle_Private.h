@@ -17,11 +17,20 @@ namespace mbgl {
 @class MGLVectorTileSource;
 @class MGLVectorStyleLayer;
 
+namespace mbgl {
+    class Renderer;
+}
+
+@protocol MGLStyleHolder
+@property (nonatomic, readonly) MGLStyle *style;
+@property (nonatomic, readonly) mbgl::Renderer *renderer;
+@end
+
 @interface MGLStyle (Private)
 
-- (instancetype)initWithRawStyle:(mbgl::style::Style *)rawStyle mapView:(MGLMapView *)mapView;
+- (instancetype)initWithRawStyle:(mbgl::style::Style *)rawStyle mapView:(NSObject<MGLStyleHolder> *)mapView;
 
-@property (nonatomic, readonly, weak) MGLMapView *mapView;
+@property (nonatomic, readonly, weak) NSObject<MGLStyleHolder> *mapView;
 @property (nonatomic, readonly) mbgl::style::Style *rawStyle;
 
 - (nullable NS_ARRAY_OF(MGLAttributionInfo *) *)attributionInfosWithFontSize:(CGFloat)fontSize linkColor:(nullable MGLColor *)linkColor;

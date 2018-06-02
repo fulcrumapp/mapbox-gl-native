@@ -2,6 +2,7 @@
 #import "MGLTypes.h"
 #import "MGLGeometry.h"
 #import "MGLMapCamera.h"
+#import "MGLStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
