@@ -105,7 +105,7 @@ class MGLSnapshotterObserver;
     if (self) {
         [self setOptions:options];
         _loading = false;
-        /* _observer = new MGLSnapshotterObserver(self); */
+        _observer = new MGLSnapshotterObserver(self);
     }
     return self;
 }
@@ -476,9 +476,6 @@ class MGLSnapshotterObserver;
   return _mbglMapSnapshotter->getRenderer();
 }
 
-@end
-
-
 class MGLSnapshotterObserver : public mbgl::MapObserver
 {
 public:
@@ -492,3 +489,5 @@ public:
 private:
     __weak MGLMapSnapshotter *snapshotter = nullptr;
 };
+
+@end
