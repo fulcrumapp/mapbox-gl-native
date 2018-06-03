@@ -4,6 +4,8 @@
 #import "MGLMapCamera.h"
 #import "MGLStyle.h"
 
+@class MGLMapSnapshotter;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -114,6 +116,8 @@ MGL_EXPORT
  */
 typedef void (^MGLMapSnapshotCompletionHandler)(MGLMapSnapshot* _Nullable snapshot, NSError* _Nullable error);
 
+typedef void (^MGLMapSnapshotStyleHandler)(MGLMapSnapshotter* _Nonnull snapshotter, MGLStyle* _Nonnull style);
+
 /**
  An `MGLMapSnapshotter` generates static raster images of the map. Each snapshot
  image depicts a portion of a map defined by an `MGLMapSnapshotOptions` object
@@ -165,6 +169,8 @@ MGL_EXPORT
  @return An initialized map snapshotter.
  */
 - (instancetype)initWithOptions:(MGLMapSnapshotOptions *)options;
+
+- (instancetype)initWithOptions:(MGLMapSnapshotOptions *)options styleHandler:(nullable MGLMapSnapshotStyleHandler)styleHandler;
 
 /**
  Starts the snapshot creation and executes the specified block with the result.

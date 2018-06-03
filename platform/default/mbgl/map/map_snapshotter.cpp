@@ -195,11 +195,11 @@ LatLngBounds MapSnapshotter::getRegion() const {
 }
 
 Renderer* MapSnapshotter::getRenderer() {
-  return impl->actor().ask(&Impl::getRenderer).get();
+    return impl->actor().get()->getRenderer();
 }
 
 Map* MapSnapshotter::getMap() {
-  return impl->actor().ask(&Impl::getMap).get();
+    return impl->actor().get()->getMap();
 }
 
 } // namespace mbgl

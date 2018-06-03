@@ -56,6 +56,10 @@ public:
         return future;
     }
 
+    auto get() {
+      return object;
+    }
+
 private:
     Object* object;
     std::weak_ptr<Mailbox> weakMailbox;

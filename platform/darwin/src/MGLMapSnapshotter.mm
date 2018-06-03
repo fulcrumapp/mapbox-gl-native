@@ -86,7 +86,8 @@ class MGLSnapshotterObserver;
 
 @interface MGLMapSnapshotter() <MGLStyleHolder>
 @property (nonatomic) BOOL loading;
-@property (nonatomic, readwrite) MGLStyle *style;
+@property (nonatomic, readwrite, strong) MGLStyle *style;
+@property (nonatomic, readwrite, strong) MGLMapSnapshotStyleHandler styleHandler;
 @end
 
 @implementation MGLMapSnapshotter {
@@ -101,11 +102,19 @@ class MGLSnapshotterObserver;
 
 - (instancetype)initWithOptions:(MGLMapSnapshotOptions *)options
 {
+    return [self initWithOptions:options styleHandler:nil];
+}
+
+- (instancetype)initWithOptions:(MGLMapSnapshotOptions *)options styleHandler:(nullable MGLMapSnapshotStyleHandler)styleHandler
+{
     self = [super init];
     if (self) {
-        [self setOptions:options];
-        _loading = false;
         _observer = new MGLSnapshotterObserver(self);
+        _styleHandler = styleHandler;
+        
+        [self setOptions:options];
+        
+        _loading = false;
     }
     return self;
 }
@@ -117,6 +126,10 @@ class MGLSnapshotterObserver;
     }
 
     self.style = [[MGLStyle alloc] initWithRawStyle:&_mbglMapSnapshotter->getMap()->getStyle() mapView:self];
+
+    if (self.styleHandler) {
+        self.styleHandler(self, self.style);
+    }
 }
 
 - (void)startWithCompletionHandler:(MGLMapSnapshotCompletionHandler)completion
